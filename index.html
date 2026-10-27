@@ -72,7 +72,13 @@ body.compact-cards .movie-grid{grid-template-columns:repeat(auto-fill,minmax(135
   function applySettings(){const settings=readSettings();$('reduceMotion').checked=!!settings.reduceMotion;$('compactCards').checked=!!settings.compactCards;document.body.classList.toggle('reduce-motion',!!settings.reduceMotion);document.body.classList.toggle('compact-cards',!!settings.compactCards)}
   function saveSettings(){const settings={reduceMotion:$('reduceMotion').checked,compactCards:$('compactCards').checked};try{localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings))}catch{}applySettings()}
   let movies=loadMovies(), activeMovie=null;
-  function loadMovies(){return []}
+  function loadMovies(){
+    try {
+      const saved=localStorage.getItem(KEY);
+      if(saved!==null){const parsed=JSON.parse(saved);if(Array.isArray(parsed))return parsed;}
+    } catch {}
+    return [{id:'the-odyssey-2026',title:'The Odyssey',url:'https://www.universalpicturesathome.com/movies/the-odyssey-2026',poster:'',year:'2026',genre:'Adventure',description:'Explore the official movie page for The Odyssey, including film details and trailer.',addedAt:Date.now()}];
+  }
   function persist(){try{localStorage.setItem(KEY,JSON.stringify(movies));return true}catch{toast('Could not save. Your browser storage may be full.');return false}}
   function safeUrl(value, image=false){try{const u=new URL(value);if(!['http:','https:'].includes(u.protocol))return '';return u.href}catch{return ''}}
   function escapeHtml(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
